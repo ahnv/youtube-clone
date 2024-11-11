@@ -12,7 +12,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import "@github/relative-time-element";
-import Image from "next/image";
+import { IKImage } from "imagekitio-next";
 import { useMemo } from "react";
 import { HiDotsVertical } from "react-icons/hi";
 
@@ -53,7 +53,7 @@ export const VideoPreview = ({
         rowGap="3"
       >
         <Box position="relative" flex={orientation === "vertical" ? "1" : "3"}>
-          <Image
+          <IKImage
             src={thumbnailUrl}
             alt={title}
             style={{
@@ -61,7 +61,6 @@ export const VideoPreview = ({
             }}
             width="460"
             height="260"
-            objectFit="cover"
           />
           <Badge
             variant="unstyled"
