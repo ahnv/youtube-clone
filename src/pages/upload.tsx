@@ -1,8 +1,28 @@
-import { Heading, Input, VStack } from "@chakra-ui/react";
-import { Field, Form, FormLayout, SubmitButton } from "@saas-ui/react";
-import { useRef } from "react";
+import { Heading, Progress, useDisclosure, VStack } from "@chakra-ui/react";
+import {
+  createField,
+  Field,
+  Form,
+  FormLayout,
+  SubmitButton,
+} from "@saas-ui/react";
+import { IKUpload } from "imagekitio-next";
+import { useRef, useState } from "react";
+
+const UploadField = createField(IKUpload, {
+  isControlled: true,
+});
 
 export default function Upload() {
+  const [progress, setProgress] =
+    useState<ProgressEvent<XMLHttpRequestEventTarget> | null>(null);
+
+  const {
+    isOpen: isUploading,
+    onOpen: onUploading,
+    onClose: onUploaded,
+  } = useDisclosure();
+
   const uploadRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -40,31 +60,23 @@ export default function Upload() {
               }}
             />
 
-            <Input
-              type="file"
+            <UploadField
               name="file"
               hidden
               accept="video/*"
               ref={uploadRef}
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-
-                if (file) {
-                  alert(
-                    JSON.stringify(
-                      {
-                        title: "This file is ready to be uploaded",
-                        uploadDate: {
-                          title: form.getValues().title,
-                          description: form.getValues().description,
-                          file: `File: ${file.name} (${file.size} bytes) [${file.type}]`,
-                        },
-                      },
-                      null,
-                      2
-                    )
-                  );
-                }
+              useUniqueFileName={true}
+              customMetadata={{
+                Title: form.getValues().title,
+                Description: form.getValues().description,
+              }}
+              folder="/CityJSVideos"
+              onUploadProgress={setProgress}
+              onUploadStart={() => {
+                onUploading();
+              }}
+              onSuccess={() => {
+                onUploaded();
               }}
               transformation={{
                 post: [
@@ -76,9 +88,14 @@ export default function Upload() {
                 ],
               }}
             />
-            <SubmitButton loadingText="Uploading...">
+            <SubmitButton isLoading={isUploading} loadingText="Uploading...">
               Select File and Upload
             </SubmitButton>
+            {progress ? (
+              <Progress
+                value={progress ? (progress.loaded / progress.total) * 100 : 0}
+              />
+            ) : null}
           </FormLayout>
         )}
       </Form>
