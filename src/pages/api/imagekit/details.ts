@@ -19,12 +19,22 @@ export default async function handler(
 
   const file = await imagekit.getFileDetails(fileId);
 
-  let url : string = imagekit.url({
-    path: file.filePath,
-    queryParameters: {
-      updatedAt: new Date(file.updatedAt).getTime().toString(),
-    },
-  })
+  let url : string
+  if (file.customMetadata?.AbsReady) {
+    url = imagekit.url({
+      path: `${file.filePath}/ik-master.m3u8`,
+      transformation: [{
+        "sr": "240_360_480_720_1080"
+      }],
+    })
+  } else {
+    url = imagekit.url({
+      path: file.filePath,
+      queryParameters: {
+        updatedAt: new Date(file.updatedAt).getTime().toString(),
+      },
+    })
+  }
 
   res.status(200).json({
     id: file.fileId,
