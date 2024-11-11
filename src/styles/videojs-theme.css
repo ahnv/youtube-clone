@@ -1,0 +1,121 @@
+.video-js {
+  font-size: 12px;
+  color: #fff;
+  border-radius: 16px;
+}
+
+.video-js .vjs-poster img {
+  border-radius: 16px;
+}
+
+.vjs-default-skin .vjs-big-play-button {
+  font-size: 3em;
+  line-height: 2em;
+  height: 2em;
+  width: 2em;
+  background-color: #ff0000 !important;
+  border: none;
+  border-radius: 100%;
+  left: 50%;
+  top: 50%;
+  margin-left: -1em;
+  margin-top: -1em;
+}
+
+.video-js .vjs-control-bar {
+  background-color: transparent;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+.video-js .vjs-menu-button .vjs-menu-content {
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 0.25em;
+}
+
+.vjs-menu li.vjs-selected,
+.vjs-menu li.vjs-selected:focus,
+.vjs-menu li.vjs-selected:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.video-js .vjs-slider {
+  background-color: #d9d9d9;
+  background-color: rgba(217, 217, 217, 0.4);
+}
+
+.video-js .vjs-volume-level,
+.video-js .vjs-play-progress,
+.video-js .vjs-slider-bar {
+  background: #ff0000;
+}
+
+.video-js .vjs-load-progress {
+  background: white;
+  background: rgba(217, 217, 217, 0.5);
+}
+
+.video-js .vjs-load-progress div {
+  background: white;
+  background: rgba(217, 217, 217, 0.75);
+}
+
+.vjs-menu li.vjs-menu-item:focus,
+.vjs-menu li.vjs-menu-item:hover {
+  background-color: #ff0000;
+}
+
+.video-js .vjs-progress-control {
+  bottom: 58%;
+  position: absolute;
+  width: 100%;
+}
+
+.video-js:after {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 70%;
+  bottom: 0;
+  pointer-events: none;
+  content: "";
+  display: block;
+  opacity: 1;
+  transition: opacity 250ms ease-in-out;
+  background: linear-gradient(transparent, transparent 60%, rgba(0, 0, 0, 0.8));
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+.video-js.vjs-has-started.vjs-user-inactive.vjs-playing:after {
+  opacity: 0;
+}
+
+.video-js .vjs-control-bar {
+  z-index: 2;
+}
+
+.video-js .vjs-time-control {
+  display: block;
+  padding: 0;
+  min-width: auto;
+}
+
+.video-js .vjs-current-time {
+  padding-left: 0.4em;
+}
+
+.video-js .vjs-time-divider {
+  padding: 0 0.4em;
+}
+
+.video-js .vjs-remaining-time {
+  display: block;
+  flex-grow: 1;
+  visibility: hidden;
+}
+
+.video-js .vjs-play-progress .vjs-time-tooltip {
+  display: none !important;
+}

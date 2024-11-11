@@ -1,6 +1,12 @@
-import type { AppProps } from "next/app";
-import Link, { LinkProps } from "next/link";
-import React from "react";
+import { Search } from "@/components/Search";
+import { theme } from "@/theme";
+import {
+  Avatar,
+  Icon,
+  IconButton,
+  Image,
+  useDisclosure,
+} from "@chakra-ui/react";
 import {
   AppShell,
   Navbar,
@@ -9,44 +15,165 @@ import {
   NavbarItem,
   NavItem,
   SaasProvider,
-  SearchInput,
   Sidebar,
   SidebarSection,
 } from "@saas-ui/react";
-import { theme } from "@/theme";
-import { Divider, Icon, Image } from "@chakra-ui/react";
-import { PiHouse } from "react-icons/pi";
+import type { AppProps } from "next/app";
+import Head from "next/head";
+import Link, { LinkProps } from "next/link";
+import { usePathname } from "next/navigation";
+import React, { useEffect } from "react";
+import { BsCollectionPlay } from "react-icons/bs";
+import { IoPlayCircleOutline } from "react-icons/io5";
+import { PiHouse, PiHouseFill, PiList, PiUserCircle } from "react-icons/pi";
+import { RiVideoAddLine } from "react-icons/ri";
+import { SiYoutubeshorts } from "react-icons/si";
+import { VscHistory } from "react-icons/vsc";
 
-const NextLink = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => <Link ref={ref} {...props} />);
-
-NextLink.displayName = "NextLink";
+const NextLink = React.forwardRef<HTMLAnchorElement, LinkProps>(
+  (props, ref) => <Link ref={ref} {...props} />
+);
 
 export default function App({ Component, pageProps }: AppProps) {
+  const { isOpen, onToggle, onClose } = useDisclosure({
+    defaultIsOpen: true,
+  });
+
+  const path = usePathname();
+
+  useEffect(() => {
+    if (path.startsWith("/videos")) {
+      onClose();
+    }
+  }, [path]);
+
   return (
-    <SaasProvider linkComponent={NextLink} theme={theme}>
-      <AppShell
-        navbar={
-          <Navbar borderBottomWidth="1px" position="sticky" top="0">
-            <NavbarBrand>
-              <Image alt="Logo" src="https://ik.imgkit.net/ikmedia/logo/light_T4buIzohVH.svg" width="120px" />
-            </NavbarBrand>
-            <NavbarContent justifyContent="flex-end">
-              <NavbarItem>
-                <SearchInput size="sm" />
-              </NavbarItem>
-            </NavbarContent>
-          </Navbar>
-        }
-        sidebar={
-          <Sidebar h="calc(100vh - 58px)">
-            <SidebarSection>
-              <NavItem icon={<Icon as={PiHouse} />}>Home</NavItem>
-            </SidebarSection>
-          </Sidebar>
-        }
-      >
-        <Component {...pageProps} />
-      </AppShell>
-    </SaasProvider>
+    <>
+      <Head>
+        <title>Youtube clone</title>
+      </Head>
+      <SaasProvider linkComponent={NextLink} theme={theme}>
+        <AppShell
+          navbar={
+            <Navbar
+              borderBottomWidth="1px"
+              position="sticky"
+              top="0"
+              border="0px"
+              sx={{
+                ".sui-navbar__inner": {
+                  padding: "0 12px",
+                },
+              }}
+            >
+              <NavbarBrand>
+                <IconButton
+                  variant="ghost"
+                  icon={<Icon as={PiList} />}
+                  onClick={onToggle}
+                  aria-label="Toggle Sidebar"
+                  mr="4"
+                />
+                <Link href="/">
+                  <Image
+                    alt="Logo"
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/502px-Logo_of_YouTube_%282015-2017%29.svg.png"
+                    width="80px"
+                    h="32px"
+                  />
+                </Link>
+              </NavbarBrand>
+              <NavbarContent justifyContent="center">
+                <NavbarItem>
+                  <Search
+                    group={{
+                      size: "sm",
+                      w: "45vw",
+                      borderRadius: "full",
+                    }}
+                    input={{
+                      placeholder: "Search...",
+                      borderRadius: "full",
+                    }}
+                  />
+                </NavbarItem>
+              </NavbarContent>
+              <IconButton
+                as={Link}
+                icon={<Icon as={RiVideoAddLine} boxSize="5" />}
+                aria-label="Menu"
+                variant="ghost"
+                borderRadius="full"
+                size="md"
+                href="/upload"
+              />
+              <Avatar name="Abhinav Dhiman" size="sm" />
+            </Navbar>
+          }
+          sidebar={
+            <Sidebar
+              h="calc(100vh - 58px)"
+              maxW={{
+                base: "240px",
+                sm: "240px",
+              }}
+              border="0px"
+              variant={isOpen ? "default" : "compact"}
+              width={isOpen ? "240px" : "12"}
+            >
+              <SidebarSection>
+                <NavItem
+                  cursor="pointer"
+                  icon={
+                    <Icon
+                      boxSize="4"
+                      as={path === "/" ? PiHouseFill : PiHouse}
+                    />
+                  }
+                  href="/"
+                  isActive={path === "/"}
+                >
+                  Home
+                </NavItem>
+                <NavItem
+                  cursor="pointer"
+                  icon={<Icon boxSize="4" as={SiYoutubeshorts} />}
+                >
+                  Shorts
+                </NavItem>
+                <NavItem
+                  cursor="pointer"
+                  icon={<Icon boxSize="4" as={BsCollectionPlay} />}
+                >
+                  Subscriptions
+                </NavItem>
+                <NavItem
+                  cursor="pointer"
+                  icon={<Icon boxSize="4" as={IoPlayCircleOutline} />}
+                >
+                  Youtube Music
+                </NavItem>
+              </SidebarSection>
+              <SidebarSection>
+                <NavItem
+                  cursor="pointer"
+                  icon={<Icon boxSize="4" as={PiUserCircle} />}
+                >
+                  You
+                </NavItem>
+                <NavItem
+                  cursor="pointer"
+                  icon={<Icon boxSize="4" as={VscHistory} />}
+                >
+                  History
+                </NavItem>
+              </SidebarSection>
+            </Sidebar>
+          }
+        >
+          <Component {...pageProps} />
+        </AppShell>
+      </SaasProvider>
+    </>
   );
 }
