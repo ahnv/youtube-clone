@@ -55,6 +55,7 @@ export const VideoPreview = ({
         <Box position="relative" flex={orientation === "vertical" ? "1" : "3"}>
           <IKImage
             src={thumbnailUrl}
+            transformation={[]}
             alt={title}
             style={{
               borderRadius: "8px",

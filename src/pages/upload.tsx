@@ -83,6 +83,15 @@ export default function Upload() {
                 alert("Video uploaded successfully!");
                 router.push("/");
               }}
+              transformation={{
+                post: [
+                  {
+                    type: "abs",
+                    protocol: "hls",
+                    value: "sr-240_360_480_720_1080",
+                  },
+                ],
+              }}
             />
             <SubmitButton isLoading={isUploading} loadingText="Uploading...">
               Select File and Upload

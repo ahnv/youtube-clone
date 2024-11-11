@@ -11,6 +11,8 @@ import type { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
+import "videojs-contrib-quality-levels";
+import "videojs-hls-quality-selector";
 import "../../styles/videojs-theme.css";
 
 interface VideoProps {
@@ -44,10 +46,19 @@ export default function Video({ notFound, file }: VideoProps) {
   }, []);
 
   useEffect(() => {
-    const player = videojs("demo", {}, function onPlayerReady() {
-      console.log("onPlayerReady");
-    });
+    const player = videojs(
+      "demo",
+      {
+        playbackRates: [0.5, 1, 1.5, 2],
+      },
+      function onPlayerReady() {
+        console.log("onPlayerReady");
+      }
+    );
     player.responsive(true);
+    (player as any).hlsQualitySelector({
+      displayCurrentQuality: true,
+    });
 
     return () => {
       player.dispose();
