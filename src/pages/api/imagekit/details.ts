@@ -1,5 +1,11 @@
+import ImageKit from "imagekit";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { DEMO_FILE_LIST } from "@/data/demo";
+
+const imagekit = new ImageKit({
+  publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY!,
+  urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!,
+});
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,7 +17,27 @@ export default async function handler(
     return res.status(400).json({ error: "Missing fileId" });
   }
 
-  const file = DEMO_FILE_LIST.find((file) => file.id === fileId);
+  const file = await imagekit.getFileDetails(fileId);
 
-  res.status(200).json(file);
+  let url : string = imagekit.url({
+    path: file.filePath,
+    queryParameters: {
+      updatedAt: new Date(file.updatedAt).getTime().toString(),
+    },
+  })
+
+  res.status(200).json({
+    id: file.fileId,
+    thumbnailUrl: imagekit.url({
+      path: `${file.filePath}/ik-thumbnail.jpg`,
+      queryParameters: {
+        updatedAt: new Date(file.updatedAt).getTime().toString(),
+      },
+    }),
+    url,
+    title: file.customMetadata?.Title ?? file.name,
+    description: file.customMetadata?.Description ?? file.name,
+    duration: (file as any).duration ?? 0,
+    createdAt: file.createdAt,
+  });
 }
