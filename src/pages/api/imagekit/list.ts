@@ -13,6 +13,7 @@ export default async function handler(
 ) {
   const files = await imagekit.listFiles({
     path: "/CityJSVideos",
+    sort: "DESC_CREATED"
   });
 
   res.status(200).json(

@@ -55,6 +55,7 @@ export default function Video({ notFound, file }: VideoProps) {
     (player as any).hlsQualitySelector({
       displayCurrentQuality: true,
     });
+    player.play();
 
     return () => {
       player.dispose();
@@ -139,7 +140,9 @@ export default function Video({ notFound, file }: VideoProps) {
 
 export const getServerSideProps = (async (context) => {
   const file = await fetch(
-    "http://localhost:3000/api/imagekit/details?id=" + context.params!.id
+    `http://${context.req.headers["host"]}/api/imagekit/details?id=${
+      context.params!.id
+    }`
   );
 
   if (!file.ok) {
