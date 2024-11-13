@@ -1,4 +1,4 @@
-import { Heading, Progress, useDisclosure, VStack } from "@chakra-ui/react";
+import { Heading, Input, Progress, useDisclosure, VStack } from "@chakra-ui/react";
 import {
   createField,
   Field,
@@ -10,11 +10,9 @@ import { IKUpload } from "imagekitio-next";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 
-const UploadField = createField(IKUpload, {
-  isControlled: true,
-});
-
 export default function Upload() {
+  const router = useRouter();
+
   const [progress, setProgress] =
     useState<ProgressEvent<XMLHttpRequestEventTarget> | null>(null);
 
@@ -25,8 +23,6 @@ export default function Upload() {
   } = useDisclosure();
 
   const uploadRef = useRef<HTMLInputElement>(null);
-
-  const router = useRouter();
 
   return (
     <VStack px="12" py="6">
@@ -63,7 +59,34 @@ export default function Upload() {
               }}
             />
 
-            <UploadField
+            <Input
+              type="file"
+              name="file"
+              hidden
+              accept="video/*"
+              ref={uploadRef}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  alert(
+                    JSON.stringify(
+                      {
+                        title: "This file is ready to be uploaded",
+                        uploadDate: {
+                          title: form.getValues().title,
+                          description: form.getValues().description,
+                          file: `File: ${file.name} (${file.size} bytes) [${file.type}]`,
+                        },
+                      },
+                      null,
+                      2
+                    )
+                  );
+                }
+              }}
+            />
+
+            {/* <IKUpload
               name="file"
               hidden
               accept="video/*"
@@ -83,24 +106,24 @@ export default function Upload() {
                 alert("Video uploaded successfully!");
                 router.push("/");
               }}
-              transformation={{
-                post: [
-                  {
-                    type: "abs",
-                    protocol: "hls",
-                    value: "sr-240_360_480_720_1080",
-                  },
-                ],
-              }}
-            />
+              // transformation={{
+              //   post: [
+              //     {
+              //       type: "abs",
+              //       protocol: "hls",
+              //       value: "sr-240_360_480_720_1080",
+              //     },
+              //   ],
+              // }}
+            /> */}
             <SubmitButton isLoading={isUploading} loadingText="Uploading...">
               Select File and Upload
             </SubmitButton>
-            {progress ? (
+            {/* {progress ? (
               <Progress
                 value={progress ? (progress.loaded / progress.total) * 100 : 0}
               />
-            ) : null}
+            ) : null} */}
           </FormLayout>
         )}
       </Form>

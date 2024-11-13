@@ -1,30 +1,27 @@
+import { DEMO_FILE_LIST } from "@/data/demo";
 import ImageKit from "imagekit";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const imagekit = new ImageKit({
-  publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY!,
-  urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!,
+  publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY ?? "uninitialized",
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY ?? "uninitialized",
+  urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? "uninitialized",
 });
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const files = await imagekit.listFiles({
-    path: "/CityJSVideos",
-    sort: "DESC_CREATED"
-  });
+  /**
+   * TODO: use imagekit.listFiles to get the list of files with DESC_CREATED sort order and folder path
+   */
+  const files = DEMO_FILE_LIST
 
   res.status(200).json(
     files.map((file) => ({
       id: file.fileId,
-      thumbnailUrl: imagekit.url({
-        path: `${file.filePath}/ik-thumbnail.jpg`,
-        queryParameters: {
-          updatedAt: new Date(file.updatedAt).getTime().toString(),
-        },
-      }),
+      // TODO: use imagekit.url to generate the thumbnailUrl with updatedAt query param
+      thumbnailUrl: "https://ik.imagekit.io/v3sxk1svj/placeholder.jpg?updatedAt=1731564992583",
       title: file.customMetadata?.Title ?? file.name,
       description: file.customMetadata?.Description ?? file.name,
       duration: (file as any).duration ?? 0,

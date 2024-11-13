@@ -1,20 +1,19 @@
-import crypto from "crypto";
+import ImageKit from "imagekit"
 import type { NextApiRequest, NextApiResponse } from "next";
 
-const privateKey = process.env.IMAGEKIT_PRIVATE_KEY!;
+const imagekit = new ImageKit({
+  publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY ?? "uninitialized",
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY ?? "uninitialized",
+  urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? "uninitialized",
+});
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const token = crypto.randomUUID();
-  const expire = (Math.floor(Date.now() / 1000) + 2400).toString();
-  const privateAPIKey = privateKey;
-  const signature = crypto
-    .createHmac("sha1", privateAPIKey)
-    .update(token + expire)
-    .digest("hex");
-
+  /**
+   * TODO: Use imagekit.getAuthenticationParameters() to get the token, signature, and expire time
+   */
   res.status(200).json({
-    token,
-    expire,
-    signature,
+    token: "demo_token",
+    signature: "demo_signature",
+    expire: 123456,
   });
 }

@@ -61,7 +61,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <Head>
         <title>Youtube clone</title>
       </Head>
-      <ImageKitProvider
+      {/* <ImageKitProvider
         publicKey={imageKitPublicKey}
         urlEndpoint={imageKitUrlEndpoint}
         authenticator={async () => {
@@ -78,7 +78,7 @@ export default function App({ Component, pageProps }: AppProps) {
             return { error: "Failed to authenticate with ImageKit" };
           }
         }}
-      >
+      > */}
         <SaasProvider linkComponent={NextLink} theme={theme}>
           <AppShell
             navbar={
@@ -229,7 +229,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <Component {...pageProps} />
           </AppShell>
         </SaasProvider>
-      </ImageKitProvider>
+      {/* </ImageKitProvider> */}
     </>
   );
 }
