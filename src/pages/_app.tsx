@@ -31,6 +31,10 @@ import { PiHouse, PiHouseFill, PiList, PiUserCircle } from "react-icons/pi";
 import { RiVideoAddLine } from "react-icons/ri";
 import { SiYoutubeshorts } from "react-icons/si";
 import { VscHistory } from "react-icons/vsc";
+import "video.js/dist/video-js.css";
+import "videojs-contrib-quality-levels";
+import "videojs-hls-quality-selector";
+import "../styles/videojs-theme.css";
 
 const NextLink = React.forwardRef<HTMLAnchorElement, LinkProps>(
   (props, ref) => <Link ref={ref} {...props} />

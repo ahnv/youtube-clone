@@ -10,10 +10,6 @@ import {
 import type { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 import videojs from "video.js";
-import "video.js/dist/video-js.css";
-import "videojs-contrib-quality-levels";
-import "videojs-hls-quality-selector";
-import "../../styles/videojs-theme.css";
 
 interface VideoProps {
   notFound?: boolean;
