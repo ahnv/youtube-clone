@@ -57,10 +57,10 @@ export default function Video({ notFound, file }: VideoProps) {
       }
     );
     player.responsive(true);
+    player.play();
     (player as any).hlsQualitySelector({
       displayCurrentQuality: true,
     });
-    player.play();
 
     return () => {
       player.dispose();
