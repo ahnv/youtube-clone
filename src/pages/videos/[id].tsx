@@ -26,6 +26,8 @@ interface VideoProps {
 export default function Video({ notFound, file }: VideoProps) {
   const { title, description, url, createdAt } = file || {};
 
+  const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
+
   const [videos, setVideos] = useState<any[]>([]);
 
   const loadVideos = async () => {
@@ -42,6 +44,9 @@ export default function Video({ notFound, file }: VideoProps) {
   }, []);
 
   useEffect(() => {
+    if (!videoEl) {
+      return;
+    }
     const player = videojs(
       "demo",
       {
@@ -60,7 +65,7 @@ export default function Video({ notFound, file }: VideoProps) {
     return () => {
       player.dispose();
     };
-  }, [url]);
+  }, [url, videoEl]);
 
   if (notFound) {
     return <div>Not Found</div>;
@@ -70,7 +75,8 @@ export default function Video({ notFound, file }: VideoProps) {
     <HStack w="full" alignItems="flex-start" px="12" py="6" gap="6">
       <VStack flex="7" alignItems="flex-start">
         <video
-          id={"demo"}
+          ref={(el) => setVideoEl(el)}
+          id="demo"
           className={"video-js vjs-default-skin vjs-big-play-centered vjs-16-9"}
           controls
           style={{
