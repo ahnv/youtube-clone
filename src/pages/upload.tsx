@@ -1,43 +1,140 @@
-import { Heading, Input, Progress, useDisclosure, VStack } from "@chakra-ui/react";
+import { UploadField } from "@/components/UploadField";
+import { Heading, Progress, useDisclosure, VStack } from "@chakra-ui/react";
 import {
-  createField,
-  Field,
-  Form,
-  FormLayout,
-  SubmitButton,
-} from "@saas-ui/react";
-import { IKUpload } from "imagekitio-next";
+  ImageKitAbortError,
+  ImageKitInvalidRequestError,
+  ImageKitServerError,
+  ImageKitUploadNetworkError,
+  upload,
+} from "@imagekit/next";
+import { Field, Form, FormLayout, SubmitButton, SubmitHandler } from "@saas-ui/react";
 import { useRouter } from "next/router";
-import { useRef, useState } from "react";
+import { useState } from "react";
+
+interface FormValues {
+  title: string;
+  description: string;
+  file: File | null;
+}
+
+// const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!;
+
+// const authenticator = async () => {
+//   try {
+//     const response = await fetch("/api/imagekit/auth");
+
+//     if (!response.ok) {
+//       throw new Error("Failed to authenticate with ImageKit");
+//     }
+
+//     return response.json();
+//   } catch (error) {
+//     console.error(error);
+//     return { error: "Failed to authenticate with ImageKit" };
+//   }
+// };
 
 export default function Upload() {
+  const [progress, setProgress] = useState<ProgressEvent<EventTarget> | null>(null);
+
+  const { isOpen: isUploading, onOpen: onUploading, onClose: onUploaded } = useDisclosure();
+
   const router = useRouter();
 
-  const [progress, setProgress] =
-    useState<ProgressEvent<XMLHttpRequestEventTarget> | null>(null);
+  const handleUpload: SubmitHandler<FormValues> = async (values) => {
+    if (!values.file) {
+      return;
+    }
 
-  const {
-    isOpen: isUploading,
-    onOpen: onUploading,
-    onClose: onUploaded,
-  } = useDisclosure();
+    alert(
+      JSON.stringify(
+        {
+          title: "This file is ready to be uploaded",
+          uploadDate: {
+            title: values.title,
+            description: values.description,
+            file: `File: ${values.file.name} (${values.file.size} bytes) [${values.file.type}]`,
+          },
+        },
+        null,
+        2
+      )
+    );
 
-  const uploadRef = useRef<HTMLInputElement>(null);
+    // onUploading();
+
+    // let authParams;
+    // try {
+    //   authParams = await authenticator();
+    // } catch (authError) {
+    //   onUploaded();
+    //   alert("Failed to authenticate for upload: " + authError);
+    //   return;
+    // }
+
+    // const { signature, expire, token } = authParams;
+
+    // try {
+    //   await upload({
+    //     // Authentication parameters
+    //     expire,
+    //     token,
+    //     signature,
+    //     publicKey,
+    //     file: values.file,
+    //     fileName: values.file.name,
+    //     folder: "/CityJSVideos",
+    //     useUniqueFileName: true,
+    //     customMetadata: {
+    //       Title: values.title,
+    //       Description: values.description,
+    //     },
+    //     // transformation: {
+    //     //   post: [
+    //     //     {
+    //     //       type: "abs",
+    //     //       protocol: "hls",
+    //     //       value: "sr-240_360_480_720_1080",
+    //     //     },
+    //     //   ],
+    //     // },
+    //     onProgress: (event) => {
+    //       setProgress(event);
+    //     },
+    //   });
+    //   onUploaded();
+    //   alert("Video uploaded successfully");
+
+    //   router.push("/");
+    // } catch (error) {
+    //   if (error instanceof ImageKitAbortError) {
+    //     alert("Upload aborted: " + error.reason);
+    //   } else if (error instanceof ImageKitInvalidRequestError) {
+    //     alert("Invalid request: " + error.message);
+    //   } else if (error instanceof ImageKitUploadNetworkError) {
+    //     alert("Network error: " + error.message);
+    //   } else if (error instanceof ImageKitServerError) {
+    //     alert("Server error: " + error.message);
+    //   } else {
+    //     alert("Upload error: " + error);
+    //   }
+    //   onUploaded();
+    // }
+  };
 
   return (
     <VStack px="12" py="6">
       <Heading as="h1" size="md" mb="8" textAlign="center">
         Upload new video
       </Heading>
-      <Form
+      <Form<unknown, FormValues>
         w="80%"
         defaultValues={{
           title: "",
           description: "",
+          file: null,
         }}
-        onSubmit={async () => {
-          uploadRef.current?.click();
-        }}
+        onSubmit={handleUpload}
       >
         {(form) => (
           <FormLayout>
@@ -59,71 +156,12 @@ export default function Upload() {
               }}
             />
 
-            <Input
-              type="file"
-              name="file"
-              hidden
-              accept="video/*"
-              ref={uploadRef}
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  alert(
-                    JSON.stringify(
-                      {
-                        title: "This file is ready to be uploaded",
-                        uploadDate: {
-                          title: form.getValues().title,
-                          description: form.getValues().description,
-                          file: `File: ${file.name} (${file.size} bytes) [${file.type}]`,
-                        },
-                      },
-                      null,
-                      2
-                    )
-                  );
-                }
-              }}
-            />
+            <UploadField name="file" accept="video/*" maxFiles={1} />
 
-            {/* <IKUpload
-              name="file"
-              hidden
-              accept="video/*"
-              ref={uploadRef}
-              useUniqueFileName={true}
-              customMetadata={{
-                Title: form.getValues().title,
-                Description: form.getValues().description,
-              }}
-              folder="/CityJSVideos"
-              onUploadProgress={setProgress}
-              onUploadStart={() => {
-                onUploading();
-              }}
-              onSuccess={() => {
-                onUploaded();
-                alert("Video uploaded successfully!");
-                router.push("/");
-              }}
-              // transformation={{
-              //   post: [
-              //     {
-              //       type: "abs",
-              //       protocol: "hls",
-              //       value: "sr-240_360_480_720_1080",
-              //     },
-              //   ],
-              // }}
-            /> */}
             <SubmitButton isLoading={isUploading} loadingText="Uploading...">
-              Select File and Upload
+              Upload
             </SubmitButton>
-            {/* {progress ? (
-              <Progress
-                value={progress ? (progress.loaded / progress.total) * 100 : 0}
-              />
-            ) : null} */}
+            {progress ? <Progress value={progress ? (progress.loaded / progress.total) * 100 : 0} /> : null}
           </FormLayout>
         )}
       </Form>

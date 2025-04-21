@@ -1,15 +1,12 @@
-import ImageKit from "imagekit"
+import { getUploadAuthParams } from "@imagekit/next/server";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-const imagekit = new ImageKit({
-  publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY ?? "uninitialized",
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY ?? "uninitialized",
-  urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? "uninitialized",
-});
+const privateKey = process.env.IMAGEKIT_PRIVATE_KEY!;
+const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!;
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   /**
-   * TODO: Use imagekit.getAuthenticationParameters() to get the token, signature, and expire time
+   * TODO: Use getUploadAuthParams to get the token, signature, and expire time
    */
   res.status(200).json({
     token: "demo_token",

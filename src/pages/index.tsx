@@ -1,15 +1,5 @@
 import { VideoPreview } from "@/components/VideoPreview";
-import {
-  Badge,
-  Flex,
-  Grid,
-  GridItem,
-  HStack,
-  Skeleton,
-  SkeletonCircle,
-  SkeletonText,
-  VStack,
-} from "@chakra-ui/react";
+import { Badge, Flex, Grid, GridItem, HStack, Skeleton, SkeletonCircle, SkeletonText, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -30,14 +20,7 @@ export default function Home() {
 
   return (
     <VStack px="12" py="6" pt="2" w="full">
-      <HStack
-        justifyContent="flex-start"
-        alignItems="flex-start"
-        w="full"
-        py="2"
-        gap="3"
-        pb="7"
-      >
+      <HStack justifyContent="flex-start" alignItems="flex-start" w="full" py="2" gap="3" pb="7">
         <Badge
           variant="solid"
           fontSize="14px"
@@ -91,6 +74,7 @@ export default function Home() {
         {videos.length > 0
           ? videos.map((video) => (
               <GridItem
+                key={`video-${video.id}`}
                 pb="10"
                 px="2"
                 sx={{
@@ -127,20 +111,9 @@ export default function Home() {
                 }}
               >
                 <Skeleton height="70%" borderRadius="8px" minH="160px" />
-                <Flex
-                  justifyContent="space-between"
-                  alignItems="center"
-                  mt="-1"
-                  gap="4"
-                >
+                <Flex justifyContent="space-between" alignItems="center" mt="-1" gap="4">
                   <SkeletonCircle size="8" />
-                  <SkeletonText
-                    mt="4"
-                    noOfLines={3}
-                    spacing="3"
-                    skeletonHeight="2"
-                    flex="1"
-                  />
+                  <SkeletonText mt="4" noOfLines={3} spacing="3" skeletonHeight="2" flex="1" />
                 </Flex>
               </GridItem>
             ))}

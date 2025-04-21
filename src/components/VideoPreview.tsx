@@ -12,8 +12,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import "@github/relative-time-element";
-import Image from "next/image"
-import { IKImage } from "imagekitio-next";
+import Image from "next/image";
 import { useMemo } from "react";
 import { HiDotsVertical } from "react-icons/hi";
 
@@ -27,21 +26,12 @@ interface Props {
   orientation?: "horizontal" | "vertical";
 }
 
-export const VideoPreview = ({
-  id,
-  duration,
-  thumbnailUrl,
-  title,
-  createdAt,
-  orientation = "vertical",
-}: Props) => {
+export const VideoPreview = ({ id, duration, thumbnailUrl, title, createdAt, orientation = "vertical" }: Props) => {
   const videoLength = useMemo(() => {
     const minutes = Math.floor(duration / 60);
     const seconds = duration % 60;
 
-    return `${Number(minutes).toString().padStart(2, "0")}:${Number(seconds)
-      .toString()
-      .padStart(2, "0")}`;
+    return `${Number(minutes).toString().padStart(2, "0")}:${Number(seconds).toString().padStart(2, "0")}`;
   }, [duration]);
 
   return (
@@ -54,8 +44,7 @@ export const VideoPreview = ({
         rowGap="3"
       >
         <Box position="relative" flex={orientation === "vertical" ? "1" : "3"}>
-          {/* <IKImage */}
-          <img
+          <Image
             src={thumbnailUrl}
             alt={title}
             style={{
@@ -63,6 +52,7 @@ export const VideoPreview = ({
             }}
             width="460"
             height="260"
+            priority={true}
           />
           <Badge
             variant="unstyled"
@@ -84,19 +74,14 @@ export const VideoPreview = ({
           mt="1"
           flex={orientation === "vertical" ? "1" : "4"}
         >
-          {orientation === "vertical" ? (
-            <Avatar name="Abhinav Dhiman" size="xs" />
-          ) : null}
+          {orientation === "vertical" ? <Avatar name="Abhinav Dhiman" size="xs" /> : null}
           <Stack spacing="0.5">
             <Heading fontSize="1.2rem">{title.replace(".mp4", "")}</Heading>
             <Text color="muted" fontSize="sm">
               Abhinav Dhiman
             </Text>
             <Text color="muted" fontSize="sm">
-              <relative-time
-                datetime={createdAt}
-                format="relative"
-              ></relative-time>
+              <relative-time datetime={createdAt} format="relative"></relative-time>
             </Text>
           </Stack>
           <Spacer />

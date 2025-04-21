@@ -1,13 +1,6 @@
 import { Search } from "@/components/Search";
 import { theme } from "@/theme";
-import {
-  Avatar,
-  Divider,
-  Icon,
-  IconButton,
-  Image,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Avatar, Divider, Icon, IconButton, Image, useDisclosure } from "@chakra-ui/react";
 import {
   AppShell,
   Navbar,
@@ -19,7 +12,7 @@ import {
   Sidebar,
   SidebarSection,
 } from "@saas-ui/react";
-import { ImageKitProvider } from "imagekitio-next";
+import { ImageKitProvider } from "@imagekit/next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import Link, { LinkProps } from "next/link";
@@ -36,9 +29,7 @@ import "videojs-contrib-quality-levels";
 import "videojs-hls-quality-selector";
 import "../styles/videojs-theme.css";
 
-const NextLink = React.forwardRef<HTMLAnchorElement, LinkProps>(
-  (props, ref) => <Link ref={ref} {...props} />
-);
+const NextLink = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => <Link ref={ref} {...props} />);
 
 export default function App({ Component, pageProps }: AppProps) {
   const { isOpen, onToggle, onClose } = useDisclosure({
@@ -61,24 +52,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <Head>
         <title>Youtube clone</title>
       </Head>
-      {/* <ImageKitProvider
-        publicKey={imageKitPublicKey}
-        urlEndpoint={imageKitUrlEndpoint}
-        authenticator={async () => {
-          try {
-            const response = await fetch("/api/imagekit/auth");
-
-            if (!response.ok) {
-              throw new Error("Failed to authenticate with ImageKit");
-            }
-
-            return response.json();
-          } catch (error) {
-            console.error(error);
-            return { error: "Failed to authenticate with ImageKit" };
-          }
-        }}
-      > */}
+      {/* <ImageKitProvider urlEndpoint={imageKitUrlEndpoint}> */}
         <SaasProvider linkComponent={NextLink} theme={theme}>
           <AppShell
             navbar={
@@ -157,12 +131,7 @@ export default function App({ Component, pageProps }: AppProps) {
                   <NavItem
                     fontSize="sm"
                     cursor="pointer"
-                    icon={
-                      <Icon
-                        boxSize={isOpen ? "4" : "5"}
-                        as={path === "/" ? PiHouseFill : PiHouse}
-                      />
-                    }
+                    icon={<Icon boxSize={isOpen ? "4" : "5"} as={path === "/" ? PiHouseFill : PiHouse} />}
                     href="/"
                     isActive={path === "/"}
                   >
@@ -171,33 +140,21 @@ export default function App({ Component, pageProps }: AppProps) {
                   <NavItem
                     fontSize="sm"
                     cursor="pointer"
-                    icon={
-                      <Icon boxSize={isOpen ? "4" : "5"} as={SiYoutubeshorts} />
-                    }
+                    icon={<Icon boxSize={isOpen ? "4" : "5"} as={SiYoutubeshorts} />}
                   >
                     Shorts
                   </NavItem>
                   <NavItem
                     fontSize="sm"
                     cursor="pointer"
-                    icon={
-                      <Icon
-                        boxSize={isOpen ? "4" : "5"}
-                        as={BsCollectionPlay}
-                      />
-                    }
+                    icon={<Icon boxSize={isOpen ? "4" : "5"} as={BsCollectionPlay} />}
                   >
                     Subscriptions
                   </NavItem>
                   <NavItem
                     fontSize="sm"
                     cursor="pointer"
-                    icon={
-                      <Icon
-                        boxSize={isOpen ? "4" : "5"}
-                        as={IoPlayCircleOutline}
-                      />
-                    }
+                    icon={<Icon boxSize={isOpen ? "4" : "5"} as={IoPlayCircleOutline} />}
                   >
                     Youtube Music
                   </NavItem>
@@ -209,17 +166,11 @@ export default function App({ Component, pageProps }: AppProps) {
                   <NavItem
                     fontSize="sm"
                     cursor="pointer"
-                    icon={
-                      <Icon boxSize={isOpen ? "4" : "5"} as={PiUserCircle} />
-                    }
+                    icon={<Icon boxSize={isOpen ? "4" : "5"} as={PiUserCircle} />}
                   >
                     You
                   </NavItem>
-                  <NavItem
-                    fontSize="sm"
-                    cursor="pointer"
-                    icon={<Icon boxSize={isOpen ? "4" : "5"} as={VscHistory} />}
-                  >
+                  <NavItem fontSize="sm" cursor="pointer" icon={<Icon boxSize={isOpen ? "4" : "5"} as={VscHistory} />}>
                     History
                   </NavItem>
                 </SidebarSection>

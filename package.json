@@ -14,11 +14,11 @@
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@github/relative-time-element": "^4.4.3",
+    "@imagekit/next": "^2.1.0",
     "@saas-ui/file-upload": "^0.6.0",
     "@saas-ui/react": "^2.11.1",
     "framer-motion": "^11.11.11",
-    "imagekit": "^5.2.0",
-    "imagekitio-next": "^1.0.1",
+    "imagekit": "^6.0.0",
     "next": "15.0.3",
     "next-connect": "^1.0.0",
     "react": "18.2.0",
@@ -34,5 +34,6 @@
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "typescript": "^5"
-  }
+  },
+  "packageManager": "yarn@4.9.1"
 }
