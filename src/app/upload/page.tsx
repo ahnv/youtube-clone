@@ -19,22 +19,22 @@ interface FormValues {
   file: File | null;
 }
 
-// const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!;
+const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!;
 
-// const authenticator = async () => {
-//   try {
-//     const response = await fetch("/api/imagekit/auth");
+const authenticator = async () => {
+  try {
+    const response = await fetch("/api/imagekit/auth");
 
-//     if (!response.ok) {
-//       throw new Error("Failed to authenticate with ImageKit");
-//     }
+    if (!response.ok) {
+      throw new Error("Failed to authenticate with ImageKit");
+    }
 
-//     return response.json();
-//   } catch (error) {
-//     console.error(error);
-//     return { error: "Failed to authenticate with ImageKit" };
-//   }
-// };
+    return response.json();
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to authenticate with ImageKit" };
+  }
+};
 
 export default function Upload() {
   const [progress, setProgress] = useState<ProgressEvent<EventTarget> | null>(null);
@@ -48,80 +48,65 @@ export default function Upload() {
       return;
     }
 
-    alert(
-      JSON.stringify(
-        {
-          title: "This file is ready to be uploaded",
-          uploadDate: {
-            title: values.title,
-            description: values.description,
-            file: `File: ${values.file.name} (${values.file.size} bytes) [${values.file.type}]`,
-          },
+    onUploading();
+
+    let authParams;
+    try {
+      authParams = await authenticator();
+    } catch (authError) {
+      onUploaded();
+      alert("Failed to authenticate for upload: " + authError);
+      return;
+    }
+
+    const { signature, expire, token } = authParams;
+
+    try {
+      await upload({
+        // Authentication parameters
+        expire,
+        token,
+        signature,
+        publicKey,
+        file: values.file,
+        fileName: values.file.name,
+        folder: "/CityJSVideos",
+        useUniqueFileName: true,
+        customMetadata: {
+          Title: values.title,
+          Description: values.description,
         },
-        null,
-        2
-      )
-    );
+        transformation: {
+          post: [
+            {
+              type: "abs",
+              protocol: "hls",
+              value: "sr-240_360_480_720_1080",
+            },
+          ],
+        },
+        onProgress: (event) => {
+          setProgress(event);
+        },
+      });
+      onUploaded();
+      alert("Video uploaded successfully");
 
-    // onUploading();
-
-    // let authParams;
-    // try {
-    //   authParams = await authenticator();
-    // } catch (authError) {
-    //   onUploaded();
-    //   alert("Failed to authenticate for upload: " + authError);
-    //   return;
-    // }
-
-    // const { signature, expire, token } = authParams;
-
-    // try {
-    //   await upload({
-    //     // Authentication parameters
-    //     expire,
-    //     token,
-    //     signature,
-    //     publicKey,
-    //     file: values.file,
-    //     fileName: values.file.name,
-    //     folder: "/CityJSVideos",
-    //     useUniqueFileName: true,
-    //     customMetadata: {
-    //       Title: values.title,
-    //       Description: values.description,
-    //     },
-    //     // transformation: {
-    //     //   post: [
-    //     //     {
-    //     //       type: "abs",
-    //     //       protocol: "hls",
-    //     //       value: "sr-240_360_480_720_1080",
-    //     //     },
-    //     //   ],
-    //     // },
-    //     onProgress: (event) => {
-    //       setProgress(event);
-    //     },
-    //   });
-    //   onUploaded();
-    //   alert("Video uploaded successfully");
-
-    //   router.push("/");
-    // } catch (error) {
-    //   if (error instanceof ImageKitAbortError) {
-    //     alert("Upload aborted: " + error.reason);
-    //   } else if (error instanceof ImageKitInvalidRequestError) {
-    //     alert("Invalid request: " + error.message);
-    //   } else if (error instanceof ImageKitUploadNetworkError) {
-    //     alert("Network error: " + error.message);
-    //   } else if (error instanceof ImageKitServerError) {
-    //     alert("Server error: " + error.message);
-    //   } else {
-    //     alert("Upload error: " + error);
-    //   }
-    //   onUploaded();
-    // }
+      router.push("/");
+    } catch (error) {
+      if (error instanceof ImageKitAbortError) {
+        alert("Upload aborted: " + error.reason);
+      } else if (error instanceof ImageKitInvalidRequestError) {
+        alert("Invalid request: " + error.message);
+      } else if (error instanceof ImageKitUploadNetworkError) {
+        alert("Network error: " + error.message);
+      } else if (error instanceof ImageKitServerError) {
+        alert("Server error: " + error.message);
+      } else {
+        alert("Upload error: " + error);
+      }
+      onUploaded();
+    }
   };
 
   return (

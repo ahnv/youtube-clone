@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 // Force dynamic rendering for this route
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 // Initialize ImageKit with environment variables
 const imagekit = new ImageKit({
@@ -12,23 +13,32 @@ const imagekit = new ImageKit({
   urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? "uninitialized",
 });
 
-// GET handler function for the route
 export async function GET() {
-  /**
-   * TODO: use imagekit.listFiles to get the list of files with DESC_CREATED sort order and folder path
-   */
-  const files = DEMO_FILE_LIST;
+  const files = await imagekit.listFiles({
+    path: "/CityJSVideos",
+    sort: "DESC_CREATED",
+    searchQuery: 'type="file"'
+  });
 
-  // Return response with video data
   return NextResponse.json(
-    files.map((file) => ({
-      id: file.fileId,
-      // TODO: use imagekit.url to generate the thumbnailUrl with updatedAt query param
-      thumbnailUrl: "https://ik.imagekit.io/v3sxk1svj/placeholder.jpg?updatedAt=1731564992583",
-      title: file.customMetadata?.Title ?? file.name,
-      description: file.customMetadata?.Description ?? file.name,
-      duration: (file as any).duration ?? 0,
-      createdAt: file.createdAt,
-    }))
+    files.map((file) => {
+      if (file.type !== "file") {
+        return;
+      }
+
+      return {
+        id: file.fileId,
+        thumbnailUrl: imagekit.url({
+          path: `${file.filePath}/ik-thumbnail.jpg`,
+          queryParameters: {
+            updatedAt: new Date(file.updatedAt).getTime().toString(),
+          },
+        }),
+        title: file.customMetadata?.Title ?? file.name,
+        description: file.customMetadata?.Description ?? file.name,
+        duration: (file as any).duration ?? 0,
+        createdAt: file.createdAt,
+      };
+    }),
   );
 }

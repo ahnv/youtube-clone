@@ -12,7 +12,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import "@github/relative-time-element";
-import Image from "next/image";
+import { Image } from "@imagekit/next";
 import { useMemo } from "react";
 import { HiDotsVertical } from "react-icons/hi";
 

@@ -10,9 +10,10 @@ export async function GET() {
   /**
    * TODO: Use getUploadAuthParams to get the token, signature, and expire time
    */
-  return NextResponse.json({
-    token: "demo_token",
-    signature: "demo_signature",
-    expire: 123456,
-  });
+  return NextResponse.json(
+    getUploadAuthParams({
+      publicKey,
+      privateKey,
+    }),
+  );
 }

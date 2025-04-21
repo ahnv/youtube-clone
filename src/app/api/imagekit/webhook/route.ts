@@ -11,11 +11,17 @@ const imagekit = new ImageKit({
   urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? "uninitialized",
 });
 
-// POST route handler for webhook
+
 export async function POST(request: NextRequest) {
-  /**
-   * Update file details for fileId with custom metadata AbsReady: true
-   */
+  const body = await request.json();
+
+  const fileId = body.data.fileId;
+
+  await imagekit.updateFileDetails(fileId, {
+    customMetadata: {
+      AbsReady: true,
+    },
+  });
 
   return NextResponse.json({ success: true });
 }
