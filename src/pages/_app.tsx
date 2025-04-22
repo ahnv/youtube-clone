@@ -31,6 +31,8 @@ import "../styles/videojs-theme.css";
 
 const NextLink = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => <Link ref={ref} {...props} />);
 
+export const fetchCache = "force-no-store"
+
 export default function App({ Component, pageProps }: AppProps) {
   const { isOpen, onToggle, onClose } = useDisclosure({
     defaultIsOpen: true,
@@ -44,7 +46,6 @@ export default function App({ Component, pageProps }: AppProps) {
     }
   }, [path]);
 
-  const imageKitPublicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY;
   const imageKitUrlEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT;
 
   return (

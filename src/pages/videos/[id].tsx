@@ -23,6 +23,8 @@ interface VideoProps {
   };
 }
 
+export const fetchCache = "force-no-store"
+
 export default function Video({ notFound, file }: VideoProps) {
   const { title, description, url, createdAt } = file || {};
 

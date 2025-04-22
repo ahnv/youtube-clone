@@ -2,6 +2,8 @@ import { VideoPreview } from "@/components/VideoPreview";
 import { Badge, Flex, Grid, GridItem, HStack, Skeleton, SkeletonCircle, SkeletonText, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
+export const fetchCache = "force-no-store"
+
 export default function Home() {
   const [videos, setVideos] = useState<any[]>([]);
 

@@ -8,6 +8,8 @@ const imagekit = new ImageKit({
   urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? "uninitialized",
 });
 
+export const dynamic = 'force-dynamic'
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
