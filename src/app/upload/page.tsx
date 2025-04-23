@@ -1,3 +1,5 @@
+"use client";
+
 import { UploadField } from "@/components/UploadField";
 import { Heading, Progress, useDisclosure, VStack } from "@chakra-ui/react";
 import {
@@ -8,7 +10,7 @@ import {
   upload,
 } from "@imagekit/next";
 import { Field, Form, FormLayout, SubmitButton, SubmitHandler } from "@saas-ui/react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface FormValues {

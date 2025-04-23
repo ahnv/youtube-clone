@@ -1,31 +1,34 @@
 import { DEMO_FILE_LIST } from "@/data/demo";
 import ImageKit from "imagekit";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
+// Initialize ImageKit
 const imagekit = new ImageKit({
   publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY ?? "uninitialized",
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY ?? "uninitialized",
   urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? "uninitialized",
 });
 
-export const dynamic = 'force-dynamic'
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const fileId = req.query.id as string;
+// GET route handler
+export async function GET(request: NextRequest) {
+  // Extract fileId from the URL search params
+  const { searchParams } = new URL(request.url);
+  const fileId = searchParams.get('id');
 
   if (!fileId) {
-    return res.status(400).json({ error: "Missing fileId" });
+    return NextResponse.json({ error: "Missing fileId" }, { status: 400 });
   }
 
   const file = DEMO_FILE_LIST.find((file) => file.fileId === fileId);
 
   if (!file) {
-    return res.status(404).json({ error: "File not found" });
+    return NextResponse.json({ error: "File not found" }, { status: 404 });
   }
   
+  // Commented code preserved from original implementation
   // const file = await imagekit.getFileDetails(fileId);
 
   // let url = imagekit.url({
@@ -62,7 +65,7 @@ export default async function handler(
   //   })
   // }
 
-  res.status(200).json({
+  return NextResponse.json({
     id: file.fileId,
     // TODO: use imagekit.url to generate the thumbnailUrl with updatedAt query param
     thumbnailUrl: "https://ik.imagekit.io/v3sxk1svj/placeholder.jpg?updatedAt=1731564992583",

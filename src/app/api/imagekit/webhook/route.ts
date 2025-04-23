@@ -1,21 +1,21 @@
 import ImageKit from "imagekit";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
+// Initialize ImageKit
 const imagekit = new ImageKit({
   publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY ?? "uninitialized",
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY ?? "uninitialized",
   urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? "uninitialized",
 });
 
-export const dynamic = 'force-dynamic'
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+// POST route handler for webhook
+export async function POST(request: NextRequest) {
   /**
    * Update file details for fileId with custom metadata AbsReady: true
    */
 
-  res.status(200).json({ success: true });
+  return NextResponse.json({ success: true });
 }

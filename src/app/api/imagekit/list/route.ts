@@ -1,25 +1,26 @@
 import { DEMO_FILE_LIST } from "@/data/demo";
 import ImageKit from "imagekit";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
+// Initialize ImageKit with environment variables
 const imagekit = new ImageKit({
   publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY ?? "uninitialized",
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY ?? "uninitialized",
   urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? "uninitialized",
 });
 
-export const dynamic = 'force-dynamic'
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+// GET handler function for the route
+export async function GET() {
   /**
    * TODO: use imagekit.listFiles to get the list of files with DESC_CREATED sort order and folder path
    */
-  const files = DEMO_FILE_LIST
+  const files = DEMO_FILE_LIST;
 
-  res.status(200).json(
+  // Return response with video data
+  return NextResponse.json(
     files.map((file) => ({
       id: file.fileId,
       // TODO: use imagekit.url to generate the thumbnailUrl with updatedAt query param

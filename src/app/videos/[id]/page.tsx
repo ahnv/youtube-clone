@@ -1,3 +1,5 @@
+"use client";
+
 import { VideoPreview } from "@/components/VideoPreview";
 import {
   Avatar,
@@ -7,30 +9,48 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import type { GetServerSideProps } from "next";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import videojs from "video.js";
+import "videojs-contrib-quality-levels";
+import "videojs-hls-quality-selector";
+import "video.js/dist/video-js.css";
+import "@/styles/videojs-theme.css";
 
-interface VideoProps {
-  notFound?: boolean;
-  file?: {
-    id: string;
-    title: string;
-    description: string;
-    url: string;
-    thumbnailUrl: string;
-    createdAt: string;
-  };
+interface VideoFile {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  thumbnailUrl: string;
+  createdAt: string;
 }
 
-export const fetchCache = "force-no-store"
-
-export default function Video({ notFound, file }: VideoProps) {
-  const { title, description, url, createdAt } = file || {};
-
+export default function VideoPage() {
+  const params = useParams();
+  const videoId = params.id as string;
+  
+  const [file, setFile] = useState<VideoFile | null>(null);
+  const [notFound, setNotFound] = useState(false);
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
-
   const [videos, setVideos] = useState<any[]>([]);
+
+  const loadVideoDetails = async () => {
+    try {
+      const response = await fetch(`/api/imagekit/details?id=${videoId}`);
+      
+      if (!response.ok) {
+        setNotFound(true);
+        return;
+      }
+      
+      const data = await response.json();
+      setFile(data);
+    } catch (error) {
+      console.error("Error loading video details:", error);
+      setNotFound(true);
+    }
+  };
 
   const loadVideos = async () => {
     const response = await fetch("/api/imagekit/list");
@@ -42,8 +62,9 @@ export default function Video({ notFound, file }: VideoProps) {
   };
 
   useEffect(() => {
+    loadVideoDetails();
     loadVideos();
-  }, []);
+  }, [videoId]);
 
   useEffect(() => {
     if (!videoEl) {
@@ -56,21 +77,26 @@ export default function Video({ notFound, file }: VideoProps) {
       },
       function onPlayerReady() {
         console.log("onPlayerReady");
+
+        player.play();
       }
     );
     player.responsive(true);
-    player.play();
-    // (player as any).hlsQualitySelector({
-    //   displayCurrentQuality: true,
-    // });
+    (player as any).hlsQualitySelector({
+      displayCurrentQuality: true,
+    });
 
     return () => {
       player.dispose();
     };
-  }, [url, videoEl]);
+  }, [file?.url, videoEl]);
 
   if (notFound) {
     return <div>Not Found</div>;
+  }
+
+  if (!file) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -86,11 +112,11 @@ export default function Video({ notFound, file }: VideoProps) {
           }}
           poster={file?.thumbnailUrl}
         >
-          <source src={url} />
+          <source src={file.url} />
         </video>
         <VStack w="full" alignItems="flex-start" gap="4" mt="4">
           <Heading as="h1" size="lg" textAlign="center">
-            {title}
+            {file.title}
           </Heading>
           <HStack gap="4">
             <HStack>
@@ -122,16 +148,17 @@ export default function Video({ notFound, file }: VideoProps) {
             py="2"
           >
             <Text fontWeight="bold">
-              123k views • {new Date(createdAt!).toDateString()}
+              123k views • {new Date(file.createdAt).toDateString()}
             </Text>
 
-            <Text>{description}</Text>
+            <Text>{file.description}</Text>
           </VStack>
         </VStack>
       </VStack>
       <VStack flex="3">
         {videos.map((video) => (
           <VideoPreview
+            key={video.id}
             id={video.id}
             thumbnailUrl={video.thumbnailUrl}
             title={video.title}
@@ -145,24 +172,3 @@ export default function Video({ notFound, file }: VideoProps) {
     </HStack>
   );
 }
-
-export const getServerSideProps = (async (context) => {
-  const file = await fetch(
-    `http://${context.req.headers["host"]}/api/imagekit/details?id=${
-      context.params!.id
-    }`
-  );
-
-  if (!file.ok) {
-    return {
-      notFound: true,
-    };
-  }
-
-  return {
-    props: {
-      notFound: false,
-      file: await file.json(),
-    },
-  };
-}) satisfies GetServerSideProps<VideoProps>;
